@@ -1,0 +1,2 @@
+{{-- $attributes->mergeを使用するとcomponent側とview側でCSSが分割され上書きされない --}}
+<button  {{ $attributes->merge(['class' => 'text-white text-sm font-semibold outline-none focus:ring-1 hover:opacity-90 rounded-md']) }} >{{ $slot }}</button>
