@@ -139,6 +139,10 @@ $('#sort').on('change', function () {
     $('#form').submit();
 })
 
-window.setTimeout(() => {
-    $()
+$('.alert_test').on('click', function() {
+    Swal.fire('alert test');
 })
+
+// window.setTimeout(() => {
+//     $()
+// })

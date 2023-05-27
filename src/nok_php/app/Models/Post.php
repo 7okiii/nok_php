@@ -17,6 +17,8 @@ class Post extends Model
         'contents_of_html',
         'post_type_id',
         'is_display',
-        'post_title_img_path',
+        'created_user_id',
+        'updated_user_id',
+        'img_path',
     ];
 }

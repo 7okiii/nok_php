@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -21,6 +22,9 @@ class PostController extends Controller
      */
     public function create(Request $request)
     {
+        // ログインしているユーザーのIDを取得
+        $user_id = Auth::id();
+
         // 新規投稿の際のバリデーション
         $validated = $request->validate(
             [
@@ -39,24 +43,31 @@ class PostController extends Controller
 
         // 画像アップロードがあった場合の処理
         if ($request->file('upload_image')) {
+            // アップロードされた画像ファイルを取得し$image_filesに入れる
+            $image_file = $request->file('upload_image');
+
             // ファイル名を取得
-            $file_name = $request->file('upload_image')->getClientOriginalName();
+            $file_name = $image_file->getClientOriginalName();
 
             // storage/app/public/images　配下に取得したファイル名で保存
-            $request->file('upload_image')->storeAs('public/images', $file_name);
+            $image_file->storeAs('public/images', $file_name);
 
             // DB保存用のパスを生成（storage/images/画像のpathで表示できる）
             $image_path = 'storage/images/'.$file_name;
+
+            // dd($image_path);
         }
 
         Post::create([
-            'user_id' => 1,
+            'user_id' => $user_id,
             'title' => $title,
             'contents' => $contents,
             'contents_of_html' => $contents,
             'post_type_id' => 1,
             'is_display' => 1,
-            'post_title_img_path' => $image_path ?? ''
+            'created_user_id' => $user_id,
+            'updated_user_id' => $user_id,
+            'img_path' => $image_path ?? ''
         ]);
 
         return redirect()->route('post.index');
@@ -112,7 +123,7 @@ class PostController extends Controller
         } 
 
         // 既にDBに登録されている画像のパスを取得
-        $db_img_path = Post::where('id', $id)->get()->first()->post_title_img_path;
+        $db_img_path = Post::where('id', $id)->get()->first()->img_path;
 
         Post::where('id', $id)->update([
             'title' => $title,
@@ -122,7 +133,7 @@ class PostController extends Controller
             'is_display' => 1,
 
             // 新しい画像登録リクエストがあればそれを、なければ既に登録済みのものを、登録されていなければNULLを登録する
-            'post_title_img_path' => $image_path ?? $db_img_path ?? NULL
+            'img_path' => $image_path ?? $db_img_path ?? NULL
         ]);
 
         return redirect()->route('post.index');

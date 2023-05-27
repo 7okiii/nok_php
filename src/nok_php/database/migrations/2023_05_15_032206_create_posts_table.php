@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('contents')->nullValue(false);
             $table->text('contents_of_html')->nullValue(false);
             $table->bigInteger('post_type_id')->nullValue(false);
-            $table->text('post_title_img_path')->nullable();
+            $table->text('img_path')->nullable();
             $table->integer('is_display')->nullValue(false);
             $table->bigInteger('created_user_id')->nullable();
             $table->bigInteger('updated_user_id')->nullable();

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot:viteRef>
-        @vite(['resources/js/post.js', 'node_modules/quill/dist/quill.snow.css'])
+        @vite(['resources/js/post.js', 'resources/js/product.js', 'node_modules/quill/dist/quill.snow.css'])
     </x-slot:viteRef>
     <x-slot:header>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -25,9 +25,12 @@
                 <div class="flex flex-col mb-5">
                     <label for="">画像</label>
                     <input type="file" name="upload_image">
-                    <img class="w-1/2 my-2 border" src="{{ asset($post->post_title_img_path) }}"  alt="">
+                    <img class="w-1/2 my-2 border" src="{{ asset($post->img_path) }}"  alt="">
                 </div>
-                <x-button class="px-7 py-2 bg-gradient-to-r from-cyan-600 to-sky-700">完了</x-button>
+                <div class="flex justify-between">
+                    <x-button class="px-7 py-2 bg-gradient-to-r from-cyan-600 to-sky-700">完了</x-button>
+                    <a href="/post/destroy/{{ $post->id }}" class="deleteBtn px-7 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:brightness-110">削除</a>
+                </div>
             </form>
         </div>
     </div>
