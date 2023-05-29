@@ -7,7 +7,7 @@
         <title>Naoki</title>
 
         {{-- 全ページで利用するファイルの読み込み --}}
-        @vite(['resources/css/app.css', 'resources/sass/style.scss', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/sass/style.scss', 'resources/assets/fontawesome/css/all.css', 'resources/js/app.js'])
 
         {{-- 各ページのjs読み込み --}}
         {{ $viteRef ?? '' }}
@@ -32,5 +32,6 @@
         </div>
 
         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
     </body>
 </html>

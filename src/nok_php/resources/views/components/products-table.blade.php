@@ -24,7 +24,9 @@
                                 <x-button class="clickClass px-3 py-1.5 bg-gradient-to-tr from-teal-500 to-green-600 hidden" id="product_{{ $allProduct->id }}">OK</x-button>
                             </td>
                             <td class="col-span-3 sm:col-span-1 text-center">
-                                <x-button class="deleteBtn px-3 py-1.5 bg-gradient-to-tr from-rose-500 to-red-600" id="deleteBtn_{{ $allProduct->id }}">削除</x-button>
+                                <x-button class="deleteBtn">
+                                    <i class="fa-regular fa-trash-can text-red-500 text-xl hover:brightness-125" id="deleteBtn_{{ $allProduct->id }}"></i>  
+                                </x-button>
                             </td>
                         </tr>
                     @endforeach

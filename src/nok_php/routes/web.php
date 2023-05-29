@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', [ProductController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard.index');
@@ -68,13 +68,19 @@ Route::prefix('post')->group(function () {
     Route::post('/new', [PostController::class, 'create'])->name('post.create');
 
     // 投稿編集初期表示
-    Route::get('/edit/{id}', [PostController::class, 'show'])->name('post.show');
+    Route::get('/edit/{id}', [PostController::class, 'edit'])->name('post.edit');
 
     // 投稿編集
     Route::post('/edit', [PostController::class, 'update'])->name('post.update');
 
+    // 投稿削除（非同期）
+    Route::post('/delete', [PostController::class, 'delete'])->name('post.delete');
+
     // 投稿削除
     Route::get('/destroy/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+
+    // 投稿画像削除
+    Route::get('/delete/image/{id}', [PostController::class, 'deleteImage'])->name('post.deleteImage');
 });
 
 

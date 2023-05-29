@@ -20,7 +20,7 @@
             </div>
             <div class="flex flex-col mb-5">
                 <label for="">画像</label>
-                <input type="file" name="upload_image">
+                <input type="file" name="upload_images[]" multiple>
             </div>
             <x-button class="px-7 py-2 bg-gradient-to-r from-cyan-600 to-sky-700">投稿</x-button>
         </form>

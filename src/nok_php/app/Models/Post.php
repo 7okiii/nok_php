@@ -21,4 +21,14 @@ class Post extends Model
         'updated_user_id',
         'img_path',
     ];
+
+    /**
+     * Imageモデルに対してのリレーション
+     *
+     * @return void
+     */
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
 }

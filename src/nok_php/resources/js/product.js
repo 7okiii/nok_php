@@ -42,7 +42,8 @@ $(".clickClass").on( 'click', function (e) {
     // console.log(product_name.validate(inputValidation));
 
     if (product_name === "") {
-        alert('商品名を入力してください');
+        // alert('商品名を入力してください');
+        Swal.fire('商品名を入力してください');
     } else {
         // hiddenクラスを削除し編集ボタンの表示を戻す
         clickedEditBtn.removeClass("hidden");
@@ -85,7 +86,10 @@ $(".clickClass").on( 'click', function (e) {
             },
         })
             .done((res) => {
-                alert(`${product_name} を登録しました`);
+                Swal.fire({
+                    type: "success",
+                    text: `${product_name}を登録しました！`
+                })
                 console.log("登録完了");
             })
             //通信が失敗したとき
@@ -99,38 +103,49 @@ $(".clickClass").on( 'click', function (e) {
 
 // 商品削除
 $(".deleteBtn").on('click', function (e) {
-    if(!window.confirm('本当に削除しますか？')) {
-        window.alert('キャンセルされました');
-        return false;
-    }
-    // csrf対策の設定
-    $.ajaxSetup({
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-        },
-    });
-
-    let id = e.target.id;
-
-    $.ajax({
-        method: "POST",
-
-        url: "/dashboard/delete",
-
-        dataType: "html",
-
-        data: {
-            product_id: id.split("_")[1],
+    Swal.fire({
+        title: '本当に削除しますか？',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        if(result.value) {
+            // csrf対策の設定
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+            });
+        
+            let id = e.target.id;
+        
+            $.ajax({
+                method: "POST",
+        
+                url: "/dashboard/delete",
+        
+                dataType: "html",
+        
+                data: {
+                    product_id: id.split("_")[1],
+                }
+            })
+                .done((res) => {
+                    Swal.fire({
+                        title: '削除が完了しました！',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if(result.value) {
+                            window.location.reload();
+                        }
+                    })
+                })
+                .fail((error) => {
+                    console.log(error);
+                    console.log("エラー");
+                });
         }
     })
-        .done((res) => {
-            // 削除完了後画面を更新
-            window.location.reload();
-        })
-        .fail((error) => {
-            console.log(error);
-            console.log("エラー");
-        });
 });
 
 // 商品並び替え
@@ -138,11 +153,3 @@ $(".deleteBtn").on('click', function (e) {
 $('#sort').on('change', function () {
     $('#form').submit();
 })
-
-$('.alert_test').on('click', function() {
-    Swal.fire('alert test');
-})
-
-// window.setTimeout(() => {
-//     $()
-// })

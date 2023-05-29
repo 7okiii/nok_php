@@ -23,9 +23,17 @@
                     <input type="text" id="contents_input" name="contents" class="hidden" value="{{ $post->contents }}">
                 </div>
                 <div class="flex flex-col mb-5">
-                    <label for="">画像</label>
-                    <input type="file" name="upload_image">
-                    <img class="w-1/2 my-2 border" src="{{ asset($post->img_path) }}"  alt="">
+                    <label for="">画像追加</label>
+                    <input type="file" name="upload_images[]" multiple>
+                    <div class="flex flex-wrap items-center">
+                        @foreach ($images as $image)
+                            <div class="relative w-1/2 p-1">
+                                {{-- <a href="/post/delete/image/{{ $image->id }}" class="delete_image absolute top-3 right-3"><i class="fa-regular fa-circle-xmark text-lg text-red-500 bg-gray-100 rounded-full hover:brightness-125"></i></a> --}}
+                                <i class="delete_image fa-regular absolute top-3 right-3 fa-circle-xmark text-lg text-red-500 bg-gray-100 rounded-full hover:brightness-125" id="deleteImage_{{ $image->id }}"></i>
+                                <img class="border-2 border-sky-300" src="{{ asset($image->image_path) }}"  alt="">
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
                 <div class="flex justify-between">
                     <x-button class="px-7 py-2 bg-gradient-to-r from-cyan-600 to-sky-700">完了</x-button>

@@ -24,10 +24,66 @@ $('#deletePost').on('click', function (e) {
     
     // 削除をキャンセルした場合 false を返し削除処理を中止
     if(!window.confirm('本当に削除しますか？')) {
-        window.alert('キャンセルされました');
         return false;
     }
 
     // OKが押された場合は true を返し削除処理を実行
     return true;
+})
+
+$('.delete_image').on('click', function (e) {
+    
+    if(!window.confirm('本当に削除しますか？')) {
+        return false
+    }
+
+    return true;
+})
+
+
+$('.deletePost').on('click', function (e) {
+    Swal.fire({
+        title: '本当に削除しますか？',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        if(result.value) {
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+            });
+
+            let id = e.target.id;
+            let post_id = id.split("_")[1];
+
+            $.ajax({
+                method: "POST",
+
+                url: "post/delete",
+
+                dataType: "html",
+
+                data: {
+                    post_id,
+                }
+            })
+            .done((res) => {
+                Swal.fire({
+                    type: 'success',
+                    title: '削除が完了しました！',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if(result.value) {
+                        window.location.reload();
+                    }
+                })
+            })
+            .fail((error) => {
+                console.log(error);
+                console.log("エラー");
+            });
+        }
+    })
 })

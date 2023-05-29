@@ -22,9 +22,6 @@
                 {{-- 商品検索 --}}
                 <x-search-box />
             </div>
-            
-
-            <span class="alert_test text-white">alert test</span>
 
             <div class="flex justify-between items-center mt-5">
 

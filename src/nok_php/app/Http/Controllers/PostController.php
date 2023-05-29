@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * 初期表示
+     *
+     * @return void
      */
     public function index()
     {
@@ -17,8 +21,12 @@ class PostController extends Controller
         return view('post.post', compact('posts'));
     }
 
+
     /**
-     * Show the form for creating a new resource.
+     * 新規投稿
+     *
+     * @param Request $request
+     * @return void
      */
     public function create(Request $request)
     {
@@ -42,23 +50,30 @@ class PostController extends Controller
         $contents = $request->contents;
 
         // 画像アップロードがあった場合の処理
-        if ($request->file('upload_image')) {
+        if ($request->file('upload_images')) {
             // アップロードされた画像ファイルを取得し$image_filesに入れる
-            $image_file = $request->file('upload_image');
+            $image_files = $request->file('upload_images');
 
-            // ファイル名を取得
-            $file_name = $image_file->getClientOriginalName();
+            // 画像のパスをDBに保存するために配列を用意
+            $path_array = [];
 
-            // storage/app/public/images　配下に取得したファイル名で保存
-            $image_file->storeAs('public/images', $file_name);
+            foreach($image_files as $image_file) {
+                // ファイル名を取得
+                $file_name = $image_file->getClientOriginalName();
 
-            // DB保存用のパスを生成（storage/images/画像のpathで表示できる）
-            $image_path = 'storage/images/'.$file_name;
+                // storage/app/public/images　配下に取得したファイル名で保存
+                $image_file->storeAs('public/images', $file_name);
 
-            // dd($image_path);
+                // DB保存用のパスを生成（storage/images/画像のpathで表示できる）
+                $image_paths = 'storage/images/'.$file_name;
+
+                // パスを配列に入れていく
+                array_push($path_array, $image_paths);
+            }
         }
 
-        Post::create([
+        // 戻り値の $return に返ってくるidをimages_tableのpost_idとして使用
+        $return = Post::create([
             'user_id' => $user_id,
             'title' => $title,
             'contents' => $contents,
@@ -67,9 +82,19 @@ class PostController extends Controller
             'is_display' => 1,
             'created_user_id' => $user_id,
             'updated_user_id' => $user_id,
-            'img_path' => $image_path ?? ''
         ]);
 
+
+        // 画像のパスが格納されている $path_array がある場合以下の処理を実行
+        if (isset($path_array)) {
+            $post_id = $return->id;
+            foreach($path_array as $image_path) {
+                Image::create([
+                    'post_id' => $post_id,
+                    'image_path' => $image_path
+                ]);
+            }
+        }
         return redirect()->route('post.index');
     }
 
@@ -84,19 +109,21 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show()
     {
-        $post = Post::find($id);
-
-        return view('post.post_edit', compact('post'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
-        //
+        $post = Post::find($id);
+
+        // リレーションを使用して images_table から対象データを取得
+        $images = $post->images;
+
+        return view('post.post_edit', compact('post', 'images'));
     }
 
     /**
@@ -108,19 +135,35 @@ class PostController extends Controller
         $id = $request->id;
         $title = $request->title;
         $contents = $request->contents;
-    
 
-        // 画像アップロードがあった場合の処理
-        if ($request->file('upload_image')) {
-            // ファイル名を取得
-            $file_name = $request->file('upload_image')->getClientOriginalName();
+        if ($request->file('upload_images')) {
+            // アップロードされた画像ファイルを取得し$image_filesに入れる
+            $image_files = $request->file('upload_images');
 
-            // storage/app/public/images　配下に取得したファイル名で保存
-            $request->file('upload_image')->storeAs('public/images', $file_name);
+            // 画像のパスをDBに保存するために配列を用意
+            $path_array = [];
 
-            // DB保存用のパスを生成（storage/images/画像のpathで表示できる）
-            $image_path = 'storage/images/'.$file_name;
-        } 
+            foreach($image_files as $image_file) {
+                // ファイル名を取得
+                $file_name = $image_file->getClientOriginalName();
+
+                // storage/app/public/images　配下に取得したファイル名で保存
+                $image_file->storeAs('public/images', $file_name);
+
+                // DB保存用のパスを生成（storage/images/画像のpathで表示できる）
+                $image_paths = 'storage/images/'.$file_name;
+
+                // パスを配列に入れていく
+                array_push($path_array, $image_paths);
+            }
+
+            foreach($path_array as $image_path) {
+                Image::create([
+                    'post_id' => $id,
+                    'image_path' => $image_path
+                ]);
+            }
+        }
 
         // 既にDBに登録されている画像のパスを取得
         $db_img_path = Post::where('id', $id)->get()->first()->img_path;
@@ -140,11 +183,38 @@ class PostController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     *  投稿削除
+     *
+     * @param [type] $id
+     * @return void
      */
     public function destroy($id)
     {
         Post::destroy($id);
         return redirect()->route('post.index');
+    }
+
+    // 非同期処理投稿一覧画面から
+    public function delete(Request $request)
+    {
+        $post_id = (int)$request->post_id;
+        Post::destroy($post_id);
+    }
+
+    /**
+     * 投稿画像削除
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function deleteImage($id)
+    {
+        Image::destroy($id);
+
+        // 削除前編集画面のリンクを取得
+        $pre_url = url()->previous();
+
+        // 削除後編集画面に遷移
+        return redirect($pre_url);
     }
 }
