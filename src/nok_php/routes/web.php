@@ -76,6 +76,9 @@ Route::prefix('post')->group(function () {
     // 投稿削除（非同期）
     Route::post('/delete', [PostController::class, 'delete'])->name('post.delete');
 
+    // 投稿削除（非同期）
+    Route::post('/delete/image', [PostController::class, 'deleteImage'])->name('post.deleteImage');
+
     // 投稿削除
     Route::get('/destroy/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 

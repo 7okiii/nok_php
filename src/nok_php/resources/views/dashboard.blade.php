@@ -1,8 +1,3 @@
-@if (session('completeMessage'))
-    <div class="w-full text-center text-white bg-green-500 py-4" id="flash_message">
-        {{ session('completeMessage') }}
-    </div>
-@endif
 <x-app-layout>
     <x-slot:viteRef>
         @vite(['resources/js/product.js'])

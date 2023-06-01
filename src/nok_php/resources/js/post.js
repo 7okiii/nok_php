@@ -32,19 +32,57 @@ $('#deletePost').on('click', function (e) {
 })
 
 $('.delete_image').on('click', function (e) {
-    
-    if(!window.confirm('本当に削除しますか？')) {
-        return false
-    }
+    Swal.fire({
+        title: '本当に削除しますか？',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        if(result.value) {
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+            });
 
-    return true;
+            let id = e.target.id;
+            let image_id = id.split("_")[1];
+
+            $.ajax({
+                method: "POST",
+
+                url: "/post/delete/image",
+
+                dataType: "html",
+
+                data: {
+                    image_id,
+                }
+            })
+            .done((res) => {
+                Swal.fire({
+                    icon: 'success',
+                    title: '削除が完了しました！',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if(result.value) {
+                        window.location.reload();
+                    }
+                })
+            })
+            .fail((error) => {
+                console.log(error);
+                console.log("エラー");
+            });
+        }
+    })
 })
 
 
 $('.deletePost').on('click', function (e) {
     Swal.fire({
         title: '本当に削除しますか？',
-        type: 'warning',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'OK'
     }).then((result) => {
@@ -58,10 +96,13 @@ $('.deletePost').on('click', function (e) {
             let id = e.target.id;
             let post_id = id.split("_")[1];
 
+            // 一覧ページか編集ページか
+            let page = id.split("_")[0];
+
             $.ajax({
                 method: "POST",
 
-                url: "post/delete",
+                url: "/post/delete",
 
                 dataType: "html",
 
@@ -71,12 +112,19 @@ $('.deletePost').on('click', function (e) {
             })
             .done((res) => {
                 Swal.fire({
-                    type: 'success',
+                    icon: 'success',
                     title: '削除が完了しました！',
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if(result.value) {
-                        window.location.reload();
+                        if(page != 'deleteEdit') {
+                            window.location.reload();
+                        }
+                        window.history.back();
+                        let reload = () => {
+                            window.location.reload();
+                        }
+                        setTimeout(reload, 3000);
                     }
                 })
             })

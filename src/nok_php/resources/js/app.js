@@ -1,10 +1,14 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import jQuery from 'jquery';
-// import Quill from 'quill';
+import swal from 'sweetalert2';
+import Quill from 'quill';
 
 window.Alpine = Alpine;
-// window.Quill = Quill;
+Alpine.start();
+
+window.Quill = Quill;
+
 window.$ = jQuery;
 
-Alpine.start();
+window.Swal = swal;

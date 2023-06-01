@@ -13,3 +13,14 @@
     // background-image:  形状-gradient(色指定 20%, 色指定 ここの指定%まで前色からグラデーション);
     background-image: linear-gradient(45deg, #0f4454 , #164f60, #0f4454 );
 }
+
+// sweetalertのデザイン
+.swal2-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.swal2-actions > button {
+    padding: 10px 20px;
+    margin: 0 5px;
+}

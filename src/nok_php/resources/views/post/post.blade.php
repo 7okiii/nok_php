@@ -37,9 +37,6 @@
                                         </a>
                                     </td>
                                     <td>
-                                        {{-- <a href="post/destroy/{{ $post->id }}" class="deleteBtn cursor-pointer text-center" id="deletePost">
-                                            <i class="fa-regular fa-trash-can text-red-500 text-lg hover:brightness-125"></i>  
-                                        </a> --}}
                                         <i class="deletePost fa-regular fa-trash-can text-red-500 text-lg hover:brightness-125" id="deletePost_{{ $post->id }}"></i>  
                                     </td>
                                 </tr>

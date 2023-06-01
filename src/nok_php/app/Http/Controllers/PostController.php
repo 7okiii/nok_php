@@ -207,9 +207,10 @@ class PostController extends Controller
      * @param [type] $id
      * @return void
      */
-    public function deleteImage($id)
+    public function deleteImage(Request $request)
     {
-        Image::destroy($id);
+        $image_id = $request->image_id;
+        Image::destroy($image_id);
 
         // 削除前編集画面のリンクを取得
         $pre_url = url()->previous();

@@ -33,16 +33,17 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         // inputから入力値を受け取り$newProductに入れる
-        $newProduct = $request->product_name;
+        // $newProduct = $request->product_name;
+        $newProduct = $request->new_product;
         
         // Laravelのバリデーションを使用しinput(product_name)を入力必須にする
         // バリデーションの結果は$errorsに自動で保管されるのでview側でどこでも使用できる
-        $request->validate([
-            'product_name' => 'required'
-        ],
-        [
-            'product_name.required' => '商品名を入力してください'
-        ]);
+        // $request->validate([
+        //     'product_name' => 'required'
+        // ],
+        // [
+        //     'product_name.required' => '商品名を入力してください'
+        // ]);
 
         Product::create([
             'product_name' => $newProduct
@@ -99,7 +100,12 @@ class ProductController extends Controller
     }
 
     public function sort(Request $request) {
-        if ($request->sort == 'new') {
+
+        $sortOrder = $request->sortOrder;
+
+        // dd($sortOrder);
+
+        if ($sortOrder == "new") {
 
             // セレクトボックスの値が new の場合、商品を新しい順に並び替える
             $allProducts = Product::orderBy('id', 'desc')->paginate(10);
@@ -108,6 +114,6 @@ class ProductController extends Controller
             // セレクトボックスの値が old の場合、商品を古い順に並び替える
             $allProducts = Product::orderBy('id', 'asc')->paginate(10);
         }
-        return view('dashboard', compact('allProducts'));
+        return view('dashboard', compact('allProducts', 'sortOrder'));
     }
 }

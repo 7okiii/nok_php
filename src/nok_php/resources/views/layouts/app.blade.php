@@ -30,8 +30,5 @@
                 {{ $slot }}
             </main>
         </div>
-
-        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
     </body>
 </html>

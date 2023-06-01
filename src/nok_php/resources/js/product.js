@@ -1,3 +1,47 @@
+// 商品登録
+$('#register_new').on('click', function(e) {
+    let new_product = document.getElementById('new_product').value;
+    // csrf対策の設定
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+
+    if(new_product == '') {
+        Swal.fire({
+            icon: 'warning',
+            text: '商品名を入力してください！',
+        })
+    } else {
+        $.ajax({
+            method: "POST",
+            url: "/save",
+            dataType: "html",
+            data: {
+                new_product: new_product
+            }
+        })
+            .done((res) => {
+                Swal.fire({
+                    icon: "success",
+                    text: `${new_product}を登録しました！`
+                }).then((result) => {
+                    if(result.value) {
+                        window.location.reload();
+                        console.log("登録完了");
+                    }
+                })
+            })
+            //通信が失敗したとき
+            .fail((error) => {
+                console.log(error);
+                console.log("エラー");
+            });
+    }
+
+})
+
 // 商品編集（input要素を入力可能にする処理）
 $(".showOkBtn").on( 'click', function (e) {
     // クリックしたボタンを取得
@@ -43,7 +87,10 @@ $(".clickClass").on( 'click', function (e) {
 
     if (product_name === "") {
         // alert('商品名を入力してください');
-        Swal.fire('商品名を入力してください');
+        Swal.fire({
+            icon: 'warning',
+            text: '商品名を入力してください'
+        });
     } else {
         // hiddenクラスを削除し編集ボタンの表示を戻す
         clickedEditBtn.removeClass("hidden");
@@ -87,7 +134,7 @@ $(".clickClass").on( 'click', function (e) {
         })
             .done((res) => {
                 Swal.fire({
-                    type: "success",
+                    icon: "success",
                     text: `${product_name}を登録しました！`
                 })
                 console.log("登録完了");
@@ -105,7 +152,7 @@ $(".clickClass").on( 'click', function (e) {
 $(".deleteBtn").on('click', function (e) {
     Swal.fire({
         title: '本当に削除しますか？',
-        type: 'warning',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'OK'
     }).then((result) => {
@@ -132,6 +179,7 @@ $(".deleteBtn").on('click', function (e) {
             })
                 .done((res) => {
                     Swal.fire({
+                        icon: 'success',
                         title: '削除が完了しました！',
                         confirmButtonText: 'OK'
                     }).then((result) => {
